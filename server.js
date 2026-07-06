@@ -1,6 +1,13 @@
-const express = require("express");
+const dns = require("node:dns");
+dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-const PORT = 5000;
+const express = require("express");
+require("dotenv").config();
+const connectDB = require("./config/db.js");
+
+const port = process.env.PORT || 5000;
+
+connectDB();
 
 const app = express();
 
@@ -15,4 +22,4 @@ app.get("/", (req, res) => {
 const ideasRouter = require("./routes/ideas.js");
 app.use("/api/ideas", ideasRouter);
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}.`));
+app.listen(port, () => console.log(`Listening on port ${port}.`));
