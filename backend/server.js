@@ -9,6 +9,7 @@ const ideasRouter = require("./routes/ideas.js");
 
 const port = process.env.PORT || 5000;
 
+// Database connection
 connectDB();
 
 const app = express();
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Idea Board API." });
 });
 
+// Ideas router
 app.use("/api/ideas", ideasRouter);
 
 app.listen(port, () => console.log(`Listening on port ${port}.`));
