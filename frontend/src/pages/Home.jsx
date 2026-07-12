@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getIdeas } from "../api/ideas";
+import IdeaForm from "../components/IdeaForm";
 import IdeaList from "../components/IdeaList";
 
 function Home() {
@@ -19,15 +20,16 @@ function Home() {
   }, []);
 
   return (
-    <>
+    <main>
       <header className="page-header">
         <h1>Idea Board</h1>
         <p>Share and discover great ideas.</p>
       </header>
-      <main>
-        <IdeaList ideas={ideas} />
-      </main>
-    </>
+
+      <IdeaForm />
+
+      <IdeaList ideas={ideas} />
+    </main>
   );
 }
 
