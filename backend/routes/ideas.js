@@ -6,7 +6,7 @@ const router = express.Router();
 // Get all ideas
 router.get("/", async (req, res) => {
   try {
-    const ideas = await Idea.find();
+    const ideas = await Idea.find().sort({ date: -1 });
     console.log(ideas.length);
     res.json({ success: true, data: ideas });
   } catch (error) {

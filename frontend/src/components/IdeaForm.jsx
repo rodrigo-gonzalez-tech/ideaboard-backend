@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function IdeaForm() {
+function IdeaForm({ onCreateIdea }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -18,18 +18,22 @@ function IdeaForm() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    console.log(formData); // Make POST request later
+    try {
+      await onCreateIdea(formData);
 
-    setFormData({
-      text: "",
-      tag: "",
-      username: "",
-    });
+      setFormData({
+        text: "",
+        tag: "",
+        username: "",
+      });
 
-    setIsOpen(false);
+      setIsOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
