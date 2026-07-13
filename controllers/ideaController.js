@@ -18,14 +18,20 @@ async function getIdeas(req, res) {
 async function getIdea(req, res) {
   try {
     const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({ success: false, error: "Idea not found." });
+    }
+
     res.json({ success: true, data: idea });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({ success: false, error: "Something went wrong." });
   }
 }
 
-// Post an idea
+// Create an idea
 async function createIdea(req, res) {
   const idea = new Idea({
     text: req.body.text,
@@ -35,9 +41,11 @@ async function createIdea(req, res) {
 
   try {
     const savedIdea = await idea.save();
-    res.json({ success: true, data: savedIdea });
+
+    res.status(201).json({ success: true, data: savedIdea });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({ success: false, error: "Something went wrong." });
   }
 }
@@ -57,9 +65,15 @@ async function updateIdea(req, res) {
         new: true,
       },
     );
+
+    if (!updateIdea) {
+      return res.status(404).json({ success: false, error: "Idea not found." });
+    }
+
     res.json({ success: true, data: updatedIdea });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({ success: false, error: "Something went wrong." });
   }
 }
@@ -67,10 +81,16 @@ async function updateIdea(req, res) {
 // Delete an idea
 async function deleteIdea(req, res) {
   try {
-    await Idea.findByIdAndDelete(req.params.id);
+    const deletedIdea = await Idea.findByIdAndDelete(req.params.id);
+
+    if (!deletedIdea) {
+      return res.status(404).json({ success: false, error: "Idea not found." });
+    }
+
     res.json({ success: true, data: {} });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({ success: false, error: "Something went wrong." });
   }
 }
