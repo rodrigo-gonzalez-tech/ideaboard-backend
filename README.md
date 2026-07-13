@@ -1,1 +1,1 @@
-# Ideaboard - Simple MERN Full-stack App
+# IdeaBoard - Simple Express Back-end with MongoDB
