@@ -1,19 +1,10 @@
 const express = require("express");
-const Idea = require("../models/Idea");
+const { getIdeas } = require("../controllers/ideaController");
 
 const router = express.Router();
 
 // Get all ideas
-router.get("/", async (req, res) => {
-  try {
-    const ideas = await Idea.find().sort({ date: -1 });
-    console.log(ideas.length);
-    res.json({ success: true, data: ideas });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, error: "Something went wrong." });
-  }
-});
+router.get("/", getIdeas);
 
 // Get specific idea
 router.get("/:id", async (req, res) => {
