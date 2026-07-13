@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Idea = require("../models/Idea");
 
 // Get all ideas
@@ -17,6 +18,12 @@ async function getIdeas(req, res) {
 // Get specific idea
 async function getIdea(req, res) {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid idea ID." });
+    }
+
     const idea = await Idea.findById(req.params.id);
 
     if (!idea) {
@@ -53,6 +60,12 @@ async function createIdea(req, res) {
 // Update an idea
 async function updateIdea(req, res) {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid idea ID." });
+    }
+
     const updatedIdea = await Idea.findByIdAndUpdate(
       req.params.id,
       {
@@ -81,6 +94,12 @@ async function updateIdea(req, res) {
 // Delete an idea
 async function deleteIdea(req, res) {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid idea ID." });
+    }
+
     const deletedIdea = await Idea.findByIdAndDelete(req.params.id);
 
     if (!deletedIdea) {
