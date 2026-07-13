@@ -1,70 +1,22 @@
 const express = require("express");
-const { getIdeas } = require("../controllers/ideaController");
+const {
+  getIdeas,
+  getIdea,
+  createIdea,
+  updateIdea,
+  deleteIdea,
+} = require("../controllers/ideaController");
 
 const router = express.Router();
 
-// Get all ideas
 router.get("/", getIdeas);
 
-// Get specific idea
-router.get("/:id", async (req, res) => {
-  try {
-    const idea = await Idea.findById(req.params.id);
-    res.json({ success: true, data: idea });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, error: "Something went wrong." });
-  }
-});
+router.get("/:id", getIdea);
 
-// Post an idea
-router.post("/", async (req, res) => {
-  const idea = new Idea({
-    text: req.body.text,
-    tag: req.body.tag,
-    username: req.body.username,
-  });
+router.post("/", createIdea);
 
-  try {
-    const savedIdea = await idea.save();
-    res.json({ success: true, data: savedIdea });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, error: "Something went wrong." });
-  }
-});
+router.put("/:id", updateIdea);
 
-// Update an idea
-router.put("/:id", async (req, res) => {
-  try {
-    const updatedIdea = await Idea.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: {
-          text: req.body.text,
-          tag: req.body.tag,
-        },
-      },
-      {
-        new: true,
-      },
-    );
-    res.json({ success: true, data: updatedIdea });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, error: "Something went wrong." });
-  }
-});
-
-// Delete an idea
-router.delete("/:id", async (req, res) => {
-  try {
-    await Idea.findByIdAndDelete(req.params.id);
-    res.json({ success: true, data: {} });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, error: "Something went wrong." });
-  }
-});
+router.delete("/:id", deleteIdea);
 
 module.exports = router;
