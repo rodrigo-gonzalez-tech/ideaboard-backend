@@ -5,7 +5,9 @@ const express = require("express");
 require("dotenv").config();
 const connectDB = require("./config/db.js");
 const cors = require("cors");
+
 const ideasRouter = require("./routes/ideas.js");
+const usersRouter = require("./routes/users.js");
 
 const port = process.env.PORT || 5000;
 
@@ -25,7 +27,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Idea Board API." });
 });
 
-// Ideas router
+// Ideas
 app.use("/api/ideas", ideasRouter);
+
+// Users
+app.use("/api/users", usersRouter);
 
 app.listen(port, () => console.log(`Listening on port ${port}.`));
