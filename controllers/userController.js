@@ -1,5 +1,11 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+
+// JWT creation helper
+function generateToken(userId) {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+}
 
 // Register user
 async function registerUser(req, res) {
@@ -100,6 +106,62 @@ async function registerUser(req, res) {
   }
 }
 
+// Login user
+async function loginUser(req, res) {
+  try {
+    let { email, password } = req.body;
+
+    // Validation
+    email = email?.trim();
+    password = password?.trim();
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: "Please provide an email and a password.",
+      });
+    }
+
+    // Find the user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid credentials.", // user enumeration protection
+      });
+    }
+
+    // Compare passwords
+    const passwordMatches = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatches) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid credentials.", // user enumeration protection
+      });
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        token,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      error: "Something went wrong.",
+    });
+  }
+}
+
 module.exports = {
   registerUser,
+  loginUser,
 };
