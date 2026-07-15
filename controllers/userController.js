@@ -4,12 +4,45 @@ const User = require("../models/User");
 // Register user
 async function registerUser(req, res) {
   try {
-    const { username, email, password } = req.body;
+    let { username, email, password } = req.body;
+
+    // Validation
+
+    // Trim whitespace
+    username = username?.trim();
+    email = email?.trim();
+    password = password?.trim();
 
     if (!username || !email || !password) {
       return res.status(400).json({
         success: false,
         error: "Please provide a username, email and password.",
+      });
+    }
+
+    // Username length
+    if (username.length < 3) {
+      return res.status(400).json({
+        success: false,
+        error: "Username must be at least 3 characters long.",
+      });
+    }
+
+    // Password length
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        error: "Password must be at least 8 characters long.",
+      });
+    }
+
+    // Email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: "Please provide a valid email address.",
       });
     }
 
