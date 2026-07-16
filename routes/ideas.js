@@ -1,4 +1,5 @@
 const express = require("express");
+const protect = require("../middleware/authMiddleware");
 const {
   getIdeas,
   getIdea,
@@ -13,7 +14,7 @@ router.get("/", getIdeas);
 
 router.get("/:id", getIdea);
 
-router.post("/", createIdea);
+router.post("/", protect, createIdea);
 
 router.put("/:id", updateIdea);
 

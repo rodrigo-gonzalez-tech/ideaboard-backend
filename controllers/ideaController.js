@@ -43,7 +43,7 @@ async function createIdea(req, res) {
   const idea = new Idea({
     text: req.body.text,
     tag: req.body.tag,
-    username: req.body.username,
+    username: req.user.username,
   });
 
   try {
