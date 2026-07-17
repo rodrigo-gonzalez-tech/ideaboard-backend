@@ -16,8 +16,8 @@ router.get("/:id", getIdea);
 
 router.post("/", protect, createIdea);
 
-router.put("/:id", updateIdea);
+router.patch("/:id", protect, updateIdea);
 
-router.delete("/:id", deleteIdea);
+router.delete("/:id", protect, deleteIdea);
 
 module.exports = router;

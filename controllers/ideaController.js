@@ -4,7 +4,7 @@ const Idea = require("../models/Idea");
 // Get all ideas
 async function getIdeas(req, res) {
   try {
-    const ideas = await Idea.find().sort({ date: -1 });
+    const ideas = await Idea.find().sort({ createdAt: -1 });
     console.log(ideas.length);
 
     res.json({ success: true, data: ideas });
@@ -18,6 +18,7 @@ async function getIdeas(req, res) {
 // Get specific idea
 async function getIdea(req, res) {
   try {
+    // Check idea id format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res
         .status(400)
@@ -61,30 +62,40 @@ async function createIdea(req, res) {
 // Update an idea
 async function updateIdea(req, res) {
   try {
+    // Check idea id format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res
         .status(400)
         .json({ success: false, error: "Invalid idea ID." });
     }
 
-    const updatedIdea = await Idea.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: {
-          text: req.body.text,
-          tag: req.body.tag,
-        },
-      },
-      {
-        new: true,
-      },
-    );
+    // Find idea
+    const idea = await Idea.findById(req.params.id);
 
-    if (!updateIdea) {
+    if (!idea) {
       return res.status(404).json({ success: false, error: "Idea not found." });
     }
 
-    res.json({ success: true, data: updatedIdea });
+    // Validate ownership
+    if (!idea.user.equals(req.user._id)) {
+      return res.status(403).json({
+        success: false,
+        error: "You are not allowed to modify this idea.",
+      });
+    }
+
+    // Edit and save idea
+    if (req.body.text !== undefined) {
+      idea.text = req.body.text;
+    }
+
+    if (req.body.tag !== undefined) {
+      idea.tag = req.body.tag;
+    }
+
+    await idea.save();
+
+    res.json({ success: true, data: idea });
   } catch (error) {
     console.log(error);
 
