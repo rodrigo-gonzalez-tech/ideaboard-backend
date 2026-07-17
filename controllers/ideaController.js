@@ -44,6 +44,7 @@ async function createIdea(req, res) {
     text: req.body.text,
     tag: req.body.tag,
     username: req.user.username,
+    user: req.user._id,
   });
 
   try {
