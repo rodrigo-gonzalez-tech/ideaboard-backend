@@ -18,7 +18,7 @@ async function getIdeas(req, res) {
 // Get specific idea
 async function getIdea(req, res) {
   try {
-    // Check idea id format
+    // Check id format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res
         .status(400)
@@ -62,7 +62,7 @@ async function createIdea(req, res) {
 // Update an idea
 async function updateIdea(req, res) {
   try {
-    // Check idea id format
+    // Check id format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res
         .status(400)
@@ -106,17 +106,30 @@ async function updateIdea(req, res) {
 // Delete an idea
 async function deleteIdea(req, res) {
   try {
+    // Check id format
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res
         .status(400)
         .json({ success: false, error: "Invalid idea ID." });
     }
 
-    const deletedIdea = await Idea.findByIdAndDelete(req.params.id);
+    // Find idea
+    const idea = await Idea.findById(req.params.id);
 
-    if (!deletedIdea) {
+    if (!idea) {
       return res.status(404).json({ success: false, error: "Idea not found." });
     }
+
+    // Validate ownership
+    if (!idea.user.equals(req.user._id)) {
+      return res.status(403).json({
+        success: false,
+        error: "You are not allowed to delete this idea.",
+      });
+    }
+
+    // Delete idea
+    await idea.deleteOne();
 
     res.json({ success: true, data: {} });
   } catch (error) {
